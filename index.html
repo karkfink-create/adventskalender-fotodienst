@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Adventskalender – Foto Dienst Helgoland</title>
+<style>:root{font-family:system-ui,Arial,sans-serif;color:#fff;background:#092c35}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#276b70,#092c35 70%);min-height:100vh}header{text-align:center;padding:35px 15px 16px}h1{font-size:clamp(2rem,7vw,3.5rem);margin:0;color:#ffdf96}header p{margin:10px 0}main{max-width:900px;margin:auto;padding:15px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.door{aspect-ratio:1;background:linear-gradient(140deg,#c83e3e,#841c30);border:2px solid #e9bc6a;border-radius:13px;color:#fff;font-size:clamp(1.5rem,6vw,2.7rem);font-weight:800;cursor:pointer;box-shadow:0 5px 12px #0005}.door:focus-visible{outline:3px solid white}.door.open{background:linear-gradient(135deg,#f2d19b,#b77d34);color:#42250b}.door.locked{opacity:.75}dialog{border:3px solid #e9bc6a;border-radius:18px;background:#fffaf0;color:#24323a;max-width:min(90vw,460px);text-align:center;padding:25px}dialog::backdrop{background:#000a}dialog h2{color:#a82b3b}dialog button{background:#a82b3b;color:white;border:0;border-radius:8px;padding:12px 22px;font-weight:bold;cursor:pointer}.fineprint{text-align:center;font-size:.9rem;line-height:1.5;opacity:.9;margin:25px 0}footer{text-align:center;padding:15px;color:#e9d6ac}@media(max-width:440px){.grid{gap:7px}.door{border-radius:9px}}</style></head>
+<body><header><div style="font-size:2.8rem">🎄 ⚓ 🎁</div><h1>Helgoländer Adventskalender</h1><p>Foto Dienst Helgoland · Inhaber: Nickels Krüss</p><p>Jeden Tag ein neues Türchen öffnen!</p></header><main><div class="grid" id="grid"></div><p class="fineprint">Die Angebote gelten bis zum 31.12.2026, solange der Vorrat reicht. Zum Einlösen das jeweilige Angebot im Geschäft vorzeigen. Keine Online-Bestellung erforderlich.</p></main><footer>Frohe Adventszeit von Foto Dienst Helgoland! 🌊</footer><dialog id="popup"><h2 id="headline"></h2><p id="message"></p><button id="close">Schließen</button></dialog>
+<script>
+// Die genauen Sonderangebote der Tage 1–23 werden nachgetragen.
+// Format: 1: 'Artikel – Sonderpreis 3,95 € (statt 4,95 €)',
+const offers = {
+  23: 'Helgoland Cap – Sonderpreis 7,95 € (statt 9,95 €)',
+  24: 'Wir wünschen ein frohes Weihnachtsfest! 🎄'
+};
+const grid=document.getElementById('grid'),popup=document.getElementById('popup');
+const now=new Date();const isDecember2026=now.getFullYear()===2026&&now.getMonth()===11;
+for(let day=1;day<=24;day++){
+ const button=document.createElement('button');button.className='door';button.textContent=day;
+ const unlocked=now.getFullYear()>2026||(isDecember2026&&now.getDate()>=day);
+ if(!unlocked)button.classList.add('locked');
+ button.setAttribute('aria-label','Türchen '+day);
+ button.onclick=()=>{
+  document.getElementById('headline').textContent=day+'. Dezember';
+  document.getElementById('message').textContent=!unlocked?'Dieses Türchen öffnet sich erst am '+day+'. Dezember 2026.':(offers[day]||'Das Angebot für dieses Türchen wird noch ergänzt.');
+  if(unlocked)button.classList.add('open');popup.showModal();
+ };grid.appendChild(button);
+}
+document.getElementById('close').onclick=()=>popup.close();
+</script></body></html>
