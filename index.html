@@ -15,8 +15,11 @@ h1{font-size:clamp(26px,6vw,46px);margin:0}header p{font-size:18px}
 .ball:nth-child(3n){background:radial-gradient(circle at 30% 25%,#fff3b3,#d3a43e 65%,#80601d)}
 .ball:before{content:'';position:absolute;top:-11px;left:calc(50% - 10px);width:20px;height:12px;background:#e9ca7a;border-radius:4px 4px 0 0}
 .notice{max-width:780px;margin:0 auto 24px;padding:12px;background:#082238bd;border-radius:12px}
-dialog{border:2px solid #d5ac50;border-radius:16px;padding:28px;max-width:min(90vw,440px);color:#173047;text-align:center;box-shadow:0 10px 50px #0008}
-dialog::backdrop{background:#000a}dialog h2{margin-top:0}dialog button{background:#165c40;color:white;border:0;border-radius:8px;padding:12px 25px;font-size:17px}
+dialog{border:4px double #c49a3d;border-radius:18px;padding:30px 24px;max-width:min(92vw,460px);width:100%;color:#33291f;text-align:center;box-shadow:0 14px 55px #0009;background:linear-gradient(145deg,#fffdf5,#f7ead2);position:fixed}
+ dialog:before{content:'❄  ✦  ❄';display:block;color:#a51c2b;font-size:22px;letter-spacing:12px;margin-bottom:8px}
+ dialog h2{font-family:Georgia,serif;color:#9e1b2b;font-size:29px}
+ .sprig{font-size:27px;margin:0 0 8px}.product{font-weight:bold;font-size:23px;color:#173f2d;margin:12px 0 20px}.original{font-size:17px;color:#665b50}.original del{font-size:21px;text-decoration-color:#a51c2b;text-decoration-thickness:2px}.sale-label{font-size:15px;color:#9e1b2b;font-weight:bold;letter-spacing:1px;margin:16px 0 3px}.sale{font-family:Georgia,serif;color:#a51c2b;font-size:43px;font-weight:bold;margin:0 0 16px}.terms{font-size:13px;line-height:1.6;color:#554b41;margin:14px 0 20px}.greeting{font-family:Georgia,serif;font-size:24px;color:#a51c2b}.divider{height:1px;background:linear-gradient(90deg,transparent,#c49a3d,transparent);margin:15px 0}
+dialog::backdrop{background:#000a}dialog h2{margin-top:0}dialog button{background:#9e1b2b;color:white;border:1px solid #c49a3d;border-radius:8px;padding:12px 25px;font-size:17px;cursor:pointer}
 footer{padding:12px;background:#081b2dbb}
 @media(min-width:700px){.grid{grid-template-columns:repeat(6,1fr)}}
 @media(max-width:380px){.grid{gap:12px}}
@@ -26,7 +29,7 @@ footer{padding:12px;background:#081b2dbb}
 <header><h1>🎄 Foto Dienst Helgoland 🎄</h1><p>Unser Adventskalender 2026</p></header>
 <p class="notice">Jeden Tag ab dem 1. Dezember öffnet sich eine neue Weihnachtskugel! Alle Sonderangebote gelten ab ihrem jeweiligen Kalendertag bis zum 31.12.2026, solange der Vorrat reicht. Angebote im Geschäft vorzeigen.</p>
 <main class="grid" id="grid"></main>
-<dialog id="popup"><h2 id="heading"></h2><p id="offer"></p><button id="close" type="button">Schließen</button></dialog>
+<dialog id="popup"><div class="sprig" aria-hidden="true">🌲 🎀 🌲</div><h2 id="heading"></h2><div class="divider"></div><div id="offer"></div><button id="close" type="button">Schließen</button></dialog>
 <footer>Foto Dienst Helgoland · Frohe Adventszeit!</footer>
 <script>
 const offers = [
@@ -62,6 +65,7 @@ function availableThroughDay() {
   if (today.getMonth() < 11) return 0;
   return Math.min(24, today.getDate());
 }
+const originalPrices = ['9,95 €',null,'4,95 €','99,00 €','12,95 €','9,95 €','99,00 €','9,95 €','9,95 €','129,00 €',null,'9,95 €','159,00 €','4,95 €','12,95 €','9,95 €','9,95 €','9,95 €','99,00 €','9,95 €','99,00 €','9,95 €','9,95 €',null];
 const grid = document.getElementById('grid');
 const dialog = document.getElementById('popup');
 const heading = document.getElementById('heading');
@@ -77,13 +81,21 @@ offers.forEach(([name, price], i) => {
   button.addEventListener('click', () => {
     if (day > availableThroughDay()) {
       heading.textContent = 'Türchen ' + day;
-      offer.textContent = 'Dieses Türchen öffnet sich am ' + day + '. Dezember 2026.';
-    } else {
+             offer.textContent = 'Dieses Türchen öffnet sich am ' + day + '. Dezember 2026.';} else {
       heading.textContent = day + '. Dezember';
-      offer.textContent = day === 24
-        ? name
-        : name + ' – Sonderpreis: ' + price + ' · Gültig bis 31.12.2026, solange der Vorrat reicht.';
-    }
+             offer.replaceChildren();
+       if (day === 24) {
+         const greeting = document.createElement('p'); greeting.className = 'greeting'; greeting.textContent = name; offer.appendChild(greeting);
+       } else {
+         const product = document.createElement('p'); product.className = 'product'; product.textContent = name; offer.appendChild(product);
+         if (originalPrices[i]) {
+           const original = document.createElement('p'); original.className = 'original'; original.append('Originalpreis: ');
+           const crossed = document.createElement('del'); crossed.textContent = originalPrices[i]; original.appendChild(crossed); offer.appendChild(original);
+         }
+         const label = document.createElement('p'); label.className = 'sale-label'; label.textContent = 'SONDERPREIS'; offer.appendChild(label);
+         const sale = document.createElement('p'); sale.className = 'sale'; sale.textContent = price; offer.appendChild(sale);
+         const terms = document.createElement('p'); terms.className = 'terms'; terms.textContent = 'Gültig vom ' + day + '.12. bis 31.12.2026 · Nur solange der Vorrat reicht. · Angebot im Geschäft vorzeigen.'; offer.appendChild(terms);
+       }}
     dialog.showModal();
   });
   grid.appendChild(button);
